@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+
+[[mods]]
+modId="bitcoincity"
+version="1.0.0"
+displayName="BitcoinCity"
+credits="Creado por Luis"
+authors="Luis Argueta"
+description='''
+El mod BitcoinCity para el servidor oficial.
+'''
