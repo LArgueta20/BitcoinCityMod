@@ -102,6 +102,7 @@ public class AuthEventHandler {
                         net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
             }
         }
+        TeleportManager.tick(player);
     }
 
 }
