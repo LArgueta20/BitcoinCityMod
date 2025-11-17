@@ -142,4 +142,17 @@ public class TeleportManager {
         }
     }
 
+    // Devuelve el jugador que envió la solicitud de teletransporte al jugador dado
+    public static ServerPlayer getRequester(ServerPlayer target) {
+        String targetName = target.getName().getString();
+
+        TeleportRequest request = tpaRequests.get(targetName);
+        if (request == null) return null;
+
+        return target.server.getPlayerList().getPlayerByName(request.requester);
+    }
+
+
+
+
 }

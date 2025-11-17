@@ -5,9 +5,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -32,6 +32,38 @@ public class AuthEventHandler {
 
         if (!LoginCommand.isLogged(username)) {
             player.teleportTo(player.serverLevel(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onCommandPreprocess(net.minecraftforge.event.CommandEvent event) {
+        Object source = event.getParseResults().getContext().getSource();
+
+        // Asegurarnos de que el comando venga de un jugador
+        if (!(source instanceof net.minecraft.commands.CommandSourceStack stack)) return;
+        if (!(stack.getEntity() instanceof net.minecraft.server.level.ServerPlayer player)) return;
+
+        String username = player.getGameProfile().getName();
+        String fullCommand = event.getParseResults().getReader().getString().trim().toLowerCase(); // ← normalizamos
+
+        // Solo permitir /login y /register
+        boolean isLoginCommand = fullCommand.startsWith("login") || fullCommand.startsWith("/login");
+        boolean isRegisterCommand = fullCommand.startsWith("register") || fullCommand.startsWith("/register");
+
+        // Bloquear todo lo demás si no está logueado
+        if (!LoginCommand.isLogged(username) && !isLoginCommand && !isRegisterCommand) {
+            player.sendSystemMessage(Component.literal("§c[BitcoinCity] §7Debes iniciar sesión antes de usar comandos."));
+
+            // 🔊 Sonido de advertencia
+            player.level().playSound(
+                    null,
+                    player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.NOTE_BLOCK_BELL,
+                    SoundSource.PLAYERS,
+                    1.0f, 0.5f
+            );
+
+            event.setCanceled(true);
         }
     }
 
