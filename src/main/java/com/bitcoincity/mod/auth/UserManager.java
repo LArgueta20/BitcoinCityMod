@@ -83,4 +83,12 @@ public class UserManager {
         String stored = users.get(username.toLowerCase());
         return stored != null && stored.equals(password);
     }
+
+    public static boolean verifyPassword(String username, String password) {
+        if (username == null || password == null) return false;
+        String stored = users.get(username.toLowerCase());
+        return stored != null && stored.equals(password);
+    }
+
+
 }
